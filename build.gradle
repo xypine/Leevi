@@ -22,3 +22,5 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+// https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket
+//compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.5.1'

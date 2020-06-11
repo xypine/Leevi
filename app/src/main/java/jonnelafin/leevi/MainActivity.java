@@ -1,8 +1,10 @@
 package jonnelafin.leevi;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -16,7 +18,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import jonnelafin.leevi.ui.home.HomeViewModel;
+
+public class MainActivity extends AppCompatActivity implements WebSocketListener {
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -45,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        loadPosts();
     }
 
     @Override
@@ -59,5 +70,37 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    String host = "dev.lemmy.ml";
+    String url = "wss://" + host + "/api/v1/ws";
+    public void loadPosts(){
+        Map<String, Object> arg = new HashMap();
+        arg.put("op", "GetPosts");
+            Map<String,String> inpData = new HashMap<>();
+            inpData.put("type_", "All");
+            inpData.put("sort", "TopAll");
+        arg.put("data", inpData);
+        WebSocket.connectWebSocket(url, arg, this);
+    }
+
+    @Override
+    public void process(String data) {
+        try {
+
+            JSONObject obj = new JSONObject(data);
+
+            //TextView tv1 = (TextView)findViewById(R.id.text_home);
+            //tv1.setText(obj.toString());
+
+            HomeViewModel.setPosts(obj);
+
+            Log.i("Raw JSON", obj.toString());
+
+        } catch (Throwable t) {
+
+            Log.e("My App", "Could not parse malformed JSON: \"" + data + "\"");
+            Log.e("Error: ", t + "");
+        }
     }
 }
