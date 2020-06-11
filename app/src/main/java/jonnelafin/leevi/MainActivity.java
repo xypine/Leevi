@@ -92,8 +92,14 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
             //TextView tv1 = (TextView)findViewById(R.id.text_home);
             //tv1.setText(obj.toString());
-
-            HomeViewModel.setPosts(obj);
+            String op = (String) obj.get("op");
+            if(op.equals("GetPosts")) {
+                Log.i("OP Check", "Got the post data we wanted.");
+                HomeViewModel.setPosts(obj);
+            }
+            else{
+                Log.i("OP Check", "Not looking for data with op \"" + op + "\", ignoring data: " + data);
+            }
 
             Log.i("Raw JSON", obj.toString());
 
