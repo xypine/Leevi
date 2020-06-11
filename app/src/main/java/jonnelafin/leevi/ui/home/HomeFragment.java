@@ -1,6 +1,7 @@
 package jonnelafin.leevi.ui.home;
 
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -32,9 +33,6 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private static LinearLayout layout;
-    private static boolean update = false;
-    private static LinkedList<CardView> toAdd = new LinkedList<>();
-    private static boolean clear = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
@@ -49,35 +47,10 @@ public class HomeFragment extends Fragment {
         //        textView.setText(s);
             }
         });*/
-        Thread uiThread = new Thread(){
-            @Override
-            public void run(){
-                layout = new LinearLayout();
-                while (true){
-                    if(update){
-                        update = false;
-                        for (CardView i : toAdd){
-                            layout.addView(i);
-                        }
-                        toAdd.clear();
-                    }
-                    if(clear){
-                        clear = false;
-                        layout.removeAllViews();
-                    }
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        uiThread.start();
+
         return root;
     }
     public static void setPosts(JSONObject raw, MainActivity context){
-        clear = true;
         try {
             JSONObject data = raw.getJSONObject("data");
             JSONArray posts = data.getJSONArray("posts");
@@ -92,7 +65,7 @@ public class HomeFragment extends Fragment {
     }
 
     private static void addPostCard(LemmyPost post, MainActivity context){
-        CardView card = new CardView(context);
+        final CardView card = new CardView(context);
 
 
         LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(
@@ -103,22 +76,37 @@ public class HomeFragment extends Fragment {
         card.setLayoutParams(layoutparams);
         card.setRadius(15);
         card.setPadding(25, 25, 25, 25);
-        card.setCardBackgroundColor(Color.MAGENTA);
+        card.setCardBackgroundColor(Color.CYAN);
         card.setMaxCardElevation(30);
         card.setMaxCardElevation(6);
 
-        TextView textview = new TextView(context);
-        textview.setLayoutParams(layoutparams);
-        textview.setText(String.valueOf(post.ID));
-        textview.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 25);
-        textview.setTextColor(Color.WHITE);
-        textview.setPadding(25,25,25,25);
-        textview.setGravity(Gravity.CENTER);
+        TextView Title = new TextView(context);
+        Title.setLayoutParams(layoutparams);
+        Title.setText(post.name);
+        Title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        Title.setTextColor(Color.WHITE);
+        Title.setPadding(25,25,25,25);
+        Title.setGravity(Gravity.CENTER);
 
-        card.addView(textview);
+        TextView author = new TextView(context);
+        author.setLayoutParams(layoutparams);
+        author.setText(post.creator_name);
+        author.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.5F);
+        author.setTextColor(Color.WHITE);
+        author.setPadding(25,25,25,25);
+        author.setGravity(Gravity.TOP);
+
+        card.addView(Title);
+        card.addView(author);
         layout = context.findViewById(R.id.feed_layout);
-        toAdd.add(card);
-        update = true;
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                // TODO your Code
+                layout.addView(card);
+            }
+        });
         //layout.addView(card);
     }
 }

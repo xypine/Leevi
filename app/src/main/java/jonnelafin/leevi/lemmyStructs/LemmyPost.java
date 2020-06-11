@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 
 public class LemmyPost extends LemmyPublication {
 
-//    public String;
+    public String name;
+    public String content;
 
     public String community_name;
     public String community_nsfw;
