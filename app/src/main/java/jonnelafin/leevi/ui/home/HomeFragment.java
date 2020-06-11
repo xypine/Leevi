@@ -57,6 +57,7 @@ public class HomeFragment extends Fragment {
             for(int i = 0; i < posts.length(); i++){
                 JSONObject p = posts.getJSONObject(i);
                 LemmyPost post = LemmyPost.fromJson(p.toString());
+                Log.i("Adding post to UI", post.name);
                 addPostCard(post, context);
             }
         } catch (JSONException e) {
@@ -64,19 +65,19 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private static void addPostCard(LemmyPost post, MainActivity context){
+    private static void addPostCard(LemmyPost post, final MainActivity context){
         final CardView card = new CardView(context);
 
 
-        LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(
+        final LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
         card.setLayoutParams(layoutparams);
-        card.setRadius(15);
-        card.setPadding(25, 25, 25, 25);
-        card.setCardBackgroundColor(Color.CYAN);
+        card.setRadius(25);
+        card.setPadding(25, 25, 25, 50);
+        card.setCardBackgroundColor(Color.WHITE);
         card.setMaxCardElevation(30);
         card.setMaxCardElevation(6);
 
@@ -84,26 +85,29 @@ public class HomeFragment extends Fragment {
         Title.setLayoutParams(layoutparams);
         Title.setText(post.name);
         Title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        Title.setTextColor(Color.WHITE);
+        Title.setTextColor(Color.BLACK);
         Title.setPadding(25,25,25,25);
-        Title.setGravity(Gravity.CENTER);
+        Title.setGravity(Gravity.BOTTOM);
 
         TextView author = new TextView(context);
         author.setLayoutParams(layoutparams);
         author.setText(post.creator_name);
         author.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12.5F);
-        author.setTextColor(Color.WHITE);
-        author.setPadding(25,25,25,25);
+        author.setTextColor(Color.BLACK);
+        author.setPadding(25,25,25,50);
         author.setGravity(Gravity.TOP);
 
         card.addView(Title);
         card.addView(author);
         layout = context.findViewById(R.id.feed_layout);
+        card.setMinimumWidth(layout.getWidth());
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
                 // TODO your Code
+                layout.setBaselineAligned(true);
+
                 layout.addView(card);
             }
         });
