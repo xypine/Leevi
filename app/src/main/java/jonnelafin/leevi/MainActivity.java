@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import jonnelafin.leevi.ui.home.HomeFragment;
 import jonnelafin.leevi.ui.home.HomeViewModel;
 
 public class MainActivity extends AppCompatActivity implements WebSocketListener {
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
             String op = (String) obj.get("op");
             if(op.equals("GetPosts")) {
                 Log.i("OP Check", "Got the post data we wanted.");
-                HomeViewModel.setPosts(obj);
+                HomeFragment.setPosts(obj, this);
             }
             else{
                 Log.i("OP Check", "Not looking for data with op \"" + op + "\", ignoring data: " + data);
